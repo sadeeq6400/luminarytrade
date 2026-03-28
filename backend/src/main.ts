@@ -19,6 +19,7 @@ import { ErrorHandlingMiddleware } from './middleware-pipeline/middlewares/error
 import { RateLimitMiddleware } from './middleware-pipeline/middlewares/rate-limit.middleware';
 import { CorsMiddleware } from './middleware-pipeline/middlewares/cors.middleware';
 import { ResponseTransformInterceptor } from './middleware-pipeline/interceptors/response-transform.interceptor';
+import { CorrelationIdMiddleware } from './logging/middleware/correlation-id.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -55,7 +56,9 @@ async function bootstrap() {
   const cors = app.get(CorsMiddleware);
   const errorHandler = app.get(ErrorHandlingMiddleware);
   rateLimit.configure({ block: false });
+  const correlationId = app.get(CorrelationIdMiddleware);
   pipeline
+    .register(correlationId)
     .register(wrap('cookieParser', cookieParser()))
     .register(wrap('helmet', helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false })))
     .register(cors)

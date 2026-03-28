@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule as NestConfigModule } from '@nestjs/config';
+import { ConfigModule } from './config/config.module';
 import { BullModule } from '@nestjs/bull';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -35,10 +36,11 @@ import { AlertingModule } from './alerting/alerting.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
+    NestConfigModule.forRoot({
       isGlobal: true,
       validate,
     }),
+    ConfigModule,
     StartupModule,
     HealthModule,
     EventsModule,
